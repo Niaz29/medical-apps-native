@@ -69,6 +69,7 @@ const handleSendOtp = async() => {
    if(res?.data?.status){
     tostify({type : 'success', title : 'Success', subTitle : res?.data?.message})
    }else if(!res?.data?.status){
+    console.log("res.dara", res.data);
     tostify({type : 'info', title : 'Info', subTitle : res?.data?.message})
    }else{
     tostify({type : 'error', title : 'Error', subTitle : res?.data?.message || 'Something went wrong!'})

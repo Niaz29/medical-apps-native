@@ -39,6 +39,13 @@ export const educationApi = apiSlice.injectEndpoints({
           body: data,
         }), 
       }),
+      createAppointment: builder.mutation({
+        query: (data) => ({
+          url: '/appointments',
+          method: 'POST',
+          body: data,
+        }), 
+      }),
       getAllDoctor : builder.query({
         query: () => ({
           url: '/doctors',
@@ -68,4 +75,4 @@ export const educationApi = apiSlice.injectEndpoints({
   }),
 });
 
-export const {useCreateEducationMutation, useCreateHealthStatusMutation, useCreateExperienceMutation, useCreateCurrentMedicationMutation, useGetAllDoctorQuery, useCreateOperationHistoryMutation, useGetAllDoctorWithStatusQuery, useCreatePrescriptionMutation, useGetAllPatientQuery} = educationApi;
+export const {useCreateEducationMutation, useCreateHealthStatusMutation, useCreateExperienceMutation, useCreateCurrentMedicationMutation, useGetAllDoctorQuery, useCreateOperationHistoryMutation, useGetAllDoctorWithStatusQuery, useCreatePrescriptionMutation, useGetAllPatientQuery, useCreateAppointmentMutation} = educationApi;

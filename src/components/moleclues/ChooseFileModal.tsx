@@ -43,7 +43,7 @@ const ChooseFileModal = ({isVisible, setIsVisible, setImageUri} : any) => {
 
 
   const pickImage = async () => {
-    const result = await launchImageLibrary({ mediaType: 'photo' });
+    const result = await launchImageLibrary({ mediaType: 'photo'});
 
     if (result.didCancel) {
       console.log('User cancelled image picker');

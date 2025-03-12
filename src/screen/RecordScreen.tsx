@@ -12,11 +12,13 @@ import ChooseFileModal from '../components/moleclues/ChooseFileModal';
 import { useGetAllDoctorQuery, useGetAllPatientQuery } from '../features/education/eductionApi';
 import { tostify } from '../utils/toast';
 import { getDataJSON } from '../utils/AsyncStorageService';
+import TextInputField from '../components/atoms/TextInputField';
+import { BASE_URL } from '../constants/apiEndpoints';
 
 
 // Zod validation schema
 const medicationSchema = z.object({
-    doctorId: z.string()
+    title: z.string()
 });
 
 
@@ -29,9 +31,6 @@ const RecordScreen = ({ navigation }: any) => {
     resolver: zodResolver(medicationSchema)
   });
 
-  const {data: doctors} = useGetAllDoctorQuery(null);
-
-  const doctorOptions = doctors?.map((doc : any, index : number) => ({ key: index++, value: doc?.user?.username}))
 
   const handleDateChange = (selectedDate : any) => {
     setEndDate(selectedDate);
@@ -44,15 +43,10 @@ const RecordScreen = ({ navigation }: any) => {
       return;
     }
   
-    const doctorId = doctors?.find((item: any) => item?.user?.username === data?.doctorId)?.id;
-  
-    if (!doctorId) {
-      tostify({ type: 'error', title: 'Error', subTitle: 'Invalid Doctor Selection' });
-      return;
-    }
+
     
     const formData = new FormData();
-    formData.append('doctorId', doctorId);
+    formData.append('title', data?.title);
     formData.append('reportDate', endDate ? new Date(endDate).toISOString() : new Date().toISOString());
   
     formData.append('image', {
@@ -66,11 +60,12 @@ const RecordScreen = ({ navigation }: any) => {
     formData.append('patientId', user?.currentUser?.patientOrDoctorId);
   
     try {
-      const response = await fetch('http://192.168.0.109:3000/report', {
+      const response = await fetch(`${BASE_URL}/report`, {
         method: 'POST',
         body: formData,
         headers: {
           'Authorization': `Bearer ${user?.accessToken}`,
+          'Content-Type': 'multipart/form-data'
         },
       });
       
@@ -81,6 +76,7 @@ const RecordScreen = ({ navigation }: any) => {
         setImageUri(null);
         setEndDate(null);
         reset();
+        navigation.navigate('ReportScreen')
       } else {
         tostify({ type: 'error', title: 'Error', subTitle: json.message || 'Something went wrong!' });
     
@@ -102,28 +98,24 @@ const RecordScreen = ({ navigation }: any) => {
         </TouchableOpacity>
         <Text className="text-lg font-bold flex-1 text-center">Record</Text>
       </View>
+      
+   <View className='flex justify-center items-center w-full'>
 
-      <Controller
+   <Controller
       control={control}
-      name="doctorId"
+      name="title"
       render={({ field: { onChange, value } }) => (
-        <View className='my-3'>
-          <SelectList
-          setSelected={onChange} 
-          data={doctorOptions}
-          save="value"
-          placeholder='Select Doctor'
-        
-        />
-   </View>
+        <TextInputField placeholder="Title" value={value} onChangeText={onChange} isError={!!errors.title}/>
       )}
     />
-      <View className='w-full mb-2'>
-    {errors.doctorId && <Text className='text-red-500'>{errors.doctorId.message as string}</Text>}
+      
+    <View className='w-full ml-24'>
+    {errors.title && <Text className='text-red-500'>{errors.title.message as string}</Text>}
     </View>
+   </View>
 
       {/* Dynamic Dose Input Fields */}
-    <View>
+    <View className='w-[80%] mx-auto'>
 
         <TouchableOpacity
           onPress={() => setShowEndDatePicker(true)}

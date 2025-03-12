@@ -63,7 +63,7 @@ const ChatScreen = ({ route } : any) => {
   );
   const otherUserId = useRef(null);
 
-  const socket = SocketIOClient('http://192.168.0.109:3000', {
+  const socket = SocketIOClient('https://medical-app.online', {
     transports: ['websocket'],
     query: {
       callerId,

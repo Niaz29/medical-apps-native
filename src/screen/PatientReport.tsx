@@ -6,6 +6,8 @@ import TimeCard from '../components/moleclues/TimeCard';
 import { getDataJSON } from '../utils/AsyncStorageService';
 import DocumentViewModal from '../components/moleclues/DocumentViewModal';
 import { ScrollView } from 'react-native';
+import { Loading } from '../components/moleclues/Loading';
+import { BASE_URL } from '../constants/apiEndpoints';
 
 
 
@@ -25,7 +27,7 @@ const Header = () => {
   );
 };
 
-const RecordCard = ({doctorName, userName, time, imgSrc}: any) => {
+const RecordCard = ({doctorName, userName, time, imgSrc, title}: any) => {
   const [isVisible, setIsVisible] = useState(false);
   const [imageUri, setImageUri] = useState<string | null>(null);
   const formatDate = (dateString : any) => {
@@ -47,9 +49,9 @@ const RecordCard = ({doctorName, userName, time, imgSrc}: any) => {
 
       <View className='flex w-[177px] flex-col gap-y-2'>
 
-        <Text className='text-base text-[#151B19] font-semibold'>Records added by {doctorName}</Text>
-        <Text className='text-xs text-[#333D3A] font-normal'>Record for Dr. {userName}</Text>
-        <Text className='text-xs text-[#333D3A] font-normal'>01 Prescription</Text>
+        <Text className='text-base text-[#151B19] font-semibold'>Record added by Dr. {doctorName}</Text>
+        <Text className='text-xs text-[#333D3A] font-normal'>Record for {userName}</Text>
+        <Text className='text-xs text-[#333D3A] font-normal'>{title}</Text>
         
       </View>
 
@@ -83,7 +85,7 @@ const PatientReport = () => {
           return;
         }
   
-        const response = await fetch(`http://192.168.0.109:3000/report/doctor/${patientId}`);
+        const response = await fetch(`${BASE_URL}/prescription/patient/${patientId}`);
         const data = await response.json();
         
         setPrescriptions(data); // Set fetched prescriptions
@@ -105,9 +107,15 @@ const PatientReport = () => {
       <ScrollView className='w-[330px] bg-white rounded-lg p-4 mb-4 mx-auto'>
     
     <View className='flex flex-col gap-y-4'>
-    {
-     prescriptions?.map((item : any) => (<RecordCard key={item?.id} imgSrc={item?.docPath} time={item?.reportDate} doctorName={item?.patient?.userId?.username} userName={item?.doctor?.user?.username} />))
-    }
+    {loading ? (
+                            <Loading/>
+                        ) : (
+                            prescriptions?.length > 0 ? prescriptions?.map((item: any) => (
+                                <RecordCard key={item?.id} imgSrc={item?.docPath} time={item?.prescriptionDate} doctorName={item?.doctor?.user?.username} userName={item?.patient?.userId?.username} title={item?.title} />
+                            )) : (
+                                <Text className='text-center text-base font-semibold'>No Data Available</Text>
+                            )
+                        )}
     </View>
 
     

@@ -57,7 +57,7 @@ const UploadScreen = () => {
     });
 
     try {
-      const response = await fetch('http://192.168.0.109:3000/s3/upload', {
+      const response = await fetch('https://medical-app.online/s3/upload', {
         method: 'POST',
         body: formData,
         headers: {

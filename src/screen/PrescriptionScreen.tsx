@@ -12,11 +12,14 @@ import ChooseFileModal from '../components/moleclues/ChooseFileModal';
 import { useGetAllPatientQuery } from '../features/education/eductionApi';
 import { tostify } from '../utils/toast';
 import { getDataJSON } from '../utils/AsyncStorageService';
+import { BASE_URL } from '../constants/apiEndpoints';
+import TextInputField from '../components/atoms/TextInputField';
 
 
 // Zod validation schema
 const medicationSchema = z.object({
-  patientId: z.string()
+  patientId: z.string(),
+  title: z.string()
 });
 
 
@@ -52,6 +55,7 @@ const PrescriptionScreen = ({ navigation }: any) => {
     }
     
     const formData = new FormData();
+    formData.append('title', data?.title);
     formData.append('patientId', patientId);
     formData.append('prescriptionDate', endDate ? new Date(endDate).toISOString() : new Date().toISOString());
   
@@ -63,11 +67,10 @@ const PrescriptionScreen = ({ navigation }: any) => {
   
     const user = await getDataJSON('MEDICAL_AUTH');
 
-    console.log("user", user)
     formData.append('doctorId', user?.currentUser?.patientOrDoctorId);
   
     try {
-      const response = await fetch('http://192.168.0.109:3000/prescription', {
+      const response = await fetch(`${BASE_URL}/prescription`, {
         method: 'POST',
         body: formData,
         headers: {
@@ -104,7 +107,23 @@ const PrescriptionScreen = ({ navigation }: any) => {
         <Text className="text-lg font-bold flex-1 text-center">Prescription</Text>
       </View>
 
-      <Controller
+      <View className='flex justify-center items-center w-full'>
+
+<Controller
+   control={control}
+   name="title"
+   render={({ field: { onChange, value } }) => (
+     <TextInputField placeholder="Title" value={value} onChangeText={onChange} isError={!!errors.title}/>
+   )}
+ />
+   
+ <View className='w-full ml-24'>
+ {errors.title && <Text className='text-red-500'>{errors.title.message as string}</Text>}
+ </View>
+</View>
+
+<View className='w-[80%] mx-auto'>
+<Controller
       control={control}
       name="patientId"
       render={({ field: { onChange, value } }) => (
@@ -123,8 +142,10 @@ const PrescriptionScreen = ({ navigation }: any) => {
     {errors.patientId && <Text className='text-red-500'>{errors.patientId.message as string}</Text>}
     </View>
 
+</View>
+
       {/* Dynamic Dose Input Fields */}
-    <View>
+    <View className='w-[80%] mx-auto'>
 
         <TouchableOpacity
           onPress={() => setShowEndDatePicker(true)}

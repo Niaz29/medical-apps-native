@@ -1,5 +1,7 @@
 import React from 'react';
 import { View, Text, TextInput, Image, FlatList, TouchableOpacity, StatusBar, SafeAreaView } from 'react-native';
+import { useGetAllDoctorQuery } from '../features/education/eductionApi';
+import { Loading } from '../components/moleclues/Loading';
 
 // Search Bar Component
 const SearchBar = () => {
@@ -66,7 +68,7 @@ const DoctorCard = ({ doctor , navigation}) => {
         <Text className="text-sm font-semibold text-[#0EBE7F]">Next Available</Text>
         <Text className="text-sm font-[400] text-[#333D3A]">10:00 AM Tomorrow</Text>
         </View>
-        <TouchableOpacity onPress={() => navigation.navigate('AppointmentFisrtScreen')} className="bg-[#0EBE7F] px-6 py-3 rounded-lg">
+        <TouchableOpacity onPress={() => navigation.navigate('AppointmentFisrtScreen', {id : doctor?.id, name : doctor.name, specialty: doctor.specialty})} className="bg-[#0EBE7F] px-6 py-3 rounded-lg">
           <Text className="text-white">Book Now</Text>
         </TouchableOpacity>
       </View>
@@ -76,6 +78,18 @@ const DoctorCard = ({ doctor , navigation}) => {
 
 // Main Doctor List Component
 const DoctorList = ({navigation} :any) => {
+  const {data, isLoading} = useGetAllDoctorQuery(null);
+  const allDoctor = data?.map((item : any) => {
+    return {
+      id : item?.id,
+      name: item?.user?.username,
+      rating : (Math.random() * 10).toFixed(1),
+      experience: '07 Years experience',
+      specialty: item?.experiences[0]?.designation,
+      patientStories: (Math.random() * 100).toFixed(1),
+      image: 'https://img.freepik.com/free-photo/smiling-doctor-with-strethoscope-isolated-grey_651396-974.jpg?t=st=1734710672~exp=1734714272~hmac=1a5f5925988ca2121c324220d05621c9df2d3eeff91fa2f9cb6098131314e838'
+    }
+  });
   const doctors = [
     {
       id: 1,
@@ -133,10 +147,14 @@ const DoctorList = ({navigation} :any) => {
     },
   ];
 
+  if (isLoading) {
+    return <Loading/>
+  }
+
   return (
-    <View className='w-[330px] bg-white rounded-lg mx-auto pb-44'>
+    <View className='w-[330px] bg-white rounded-lg mx-auto pb-5'>
     <FlatList
-      data={doctors}
+      data={allDoctor || []}
       keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => <DoctorCard doctor={item} navigation={navigation}/>}
     />

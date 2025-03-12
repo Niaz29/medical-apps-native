@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TextInput, Image, FlatList, TouchableOpacity, ScrollView } from 'react-native';
 import { useGetAllDoctorQuery } from '../features/education/eductionApi';
+import { Loading } from '../components/moleclues/Loading';
 
 
 // Search Bar Component
@@ -26,13 +27,10 @@ const Header = () => {
     <View className='bg-[#0EBE7F] px-3 py-6 rounded-b-3xl'>
     <View className="flex-row justify-between items-center px-4">
       <View>
-        <Text className="text-white text-sm font-[400] mb-2">Hi Niaz!</Text>
+
         <Text className="text-white text-2xl font-bold">Find Your Doctor</Text>
       </View>
-      <Image
-        source={{ uri: 'https://www.shutterstock.com/shutterstock/photos/2289779951/display_1500/stock-photo-happy-young-man-in-glasses-white-background-2289779951.jpg' }}
-        className="w-10 h-10 rounded-full"
-      />
+    
     </View>
     <SearchBar/>
     </View>
@@ -86,7 +84,7 @@ const PopularDoctors = ({navigation}:any) => {
       <Text className="text-[20px] font-[600] text-[#151B19] mb-6">Popular Doctor</Text>
       <FlatList
         horizontal
-        data={popularDoctors}
+        data={popularDoctors || []}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => navigation.navigate('DoctorBook')} >
@@ -107,7 +105,7 @@ const PopularDoctors = ({navigation}:any) => {
 
 // Doctor On Component
 const DoctorsList = ({navigation} : any) => {
-  const {data} = useGetAllDoctorQuery(null);
+  const {data, isLoading} = useGetAllDoctorQuery(null);
 
   const allDoctor = data?.map((item : any) => {
     return {
@@ -115,19 +113,24 @@ const DoctorsList = ({navigation} : any) => {
       name: item?.user?.username,
       rating : (Math.random() * 10).toFixed(1),
       price : Math.round(Math.random() * 100),
+      specialty: item?.experiences[0]?.designation,
       image: 'https://img.freepik.com/free-photo/smiling-doctor-with-strethoscope-isolated-grey_651396-974.jpg?t=st=1734710672~exp=1734714272~hmac=1a5f5925988ca2121c324220d05621c9df2d3eeff91fa2f9cb6098131314e838'
     }
-  })
+  });
+
+  if (isLoading) {
+    return <Loading/>
+  }
 
   return (
     <View className="px-6 mt-6">
        <Text className="text-[20px] font-[600] text-[#151B19] mb-6">Doctor On</Text>
       <FlatList
       horizontal
-        data={allDoctor}
+        data={allDoctor || []}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={()=> navigation.navigate('DoctorDetails')}>
+          <TouchableOpacity onPress={()=> navigation.navigate('DoctorDetails', {id : item?.id, name : item.name, specialty: item.specialty})}>
             <View className="flex-col mr-4 justify-center bg-white rounded-2xl w-[113px] h-[153px] shadow  mb-4">
             <View className='flex-row items-center justify-between p-2'>
                 <View className='flex-row items-center gap-2'>

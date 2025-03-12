@@ -2,6 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { View, Text, FlatList, Image, TouchableOpacity } from 'react-native';
 import { useGetAllDoctorWithStatusQuery } from '../features/education/eductionApi';
+import { Loading } from '../components/moleclues/Loading';
 
 
 // Header Component
@@ -22,11 +23,15 @@ return (
 
 const ActiveDoctorListScreen = ({ navigation }: any) => {
 
-  const {data : allDoctorWithStatus} = useGetAllDoctorWithStatusQuery(null);
+  const {data : allDoctorWithStatus, isLoading} = useGetAllDoctorWithStatusQuery(null);
 
   const doctors = allDoctorWithStatus?.map((doctor : any)=> (
     { id: doctor?.id, name: doctor?.user?.username, specialty: doctor?.experiences[0]?.designation, image: 'https://img.freepik.com/free-photo/smiling-doctor-with-strethoscope-isolated-grey_651396-974.jpg?t=st=1734710672~exp=1734714272~hmac=1a5f5925988ca2121c324220d05621c9df2d3eeff91fa2f9cb6098131314e838', isActive: doctor?.isActive, callerId: doctor?.callerId }
   ));
+
+  if(isLoading){
+    return <Loading/>
+  }
 
   // const doctors = [
   //   { id: '1', name: 'Dr. Sarah Johnson',specialty: 'Tooths Dentist', image: 'https://img.freepik.com/free-photo/smiling-doctor-with-strethoscope-isolated-grey_651396-974.jpg?t=st=1734710672~exp=1734714272~hmac=1a5f5925988ca2121c324220d05621c9df2d3eeff91fa2f9cb6098131314e838', isActive: true },

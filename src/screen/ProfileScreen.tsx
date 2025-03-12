@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../app/store';
 import SocketIOClient from 'socket.io-client';
+import { userLoggedOut } from '../features/auth/authSlice';
 
 const ProfileScreen = ({navigation} : any) => {
   const {currentUser} : any = useSelector((state : RootState) => state.auth);
-
+  const dispatch = useDispatch();
   const [callerId] = useState(
     Math.floor(100000 + Math.random() * 900000).toString(),
   );
 
   if(currentUser?.role === 'doctor'){
-    const socket = SocketIOClient('http://192.168.0.109:3000', {
+    const socket = SocketIOClient('https://medical-app.online', {
       transports: ['websocket'],
       query: {
         callerId,
@@ -26,42 +27,52 @@ const ProfileScreen = ({navigation} : any) => {
       { label: 'My Doctors', icon: require('../../assets/images/doctor.png'), screen : 'Doctor' },
       { label: 'Active Doctors', icon: require('../../assets/images/doctor.png'), screen : 'ActiveDoctorListScreen' },
       { label: 'Medical Records', icon: require('../../assets/images/medical.png'), screen : 'ReportScreen' },
+      { label: 'My Prescriptions', icon: require('../../assets/images/medical.png'), screen : 'PatientReport' },
       { label: 'Payments', icon: require('../../assets/images/payments.png'), screen : 'PaymentHistoryScreen' },
-      { label: 'My Appointments', icon: require('../../assets/images/appointment.png'), screen : 'AppointmentFisrtScreen' },
-      { label: 'Maps', icon: require('../../assets/images/place.png'), screen : 'MapScreen' },
+      // { label: 'My Appointments', icon: require('../../assets/images/appointment.png'), screen : 'AppointmentFisrtScreen' },
+      { label: 'Maps', icon: require('../../assets/images/map.png'), screen : 'MapScreen' },
       { label: 'Call Emergency Ambulance', icon: require('../../assets/images/call.png'), screen : 'Doctor' },
       { label: 'Privacy & Policy', icon: require('../../assets/images/privacy.png'), screen : '' },
-      { label: 'Log out', icon: require('../../assets/images/logout.png'), screen : 'SignIn' },
+      { label: 'Log out', icon: require('../../assets/images/logout.png'), screen : 'Wellcome' },
     ],
     'doctor' : [
       { label: 'Payments', icon: require('../../assets/images/payments.png'), screen : 'PaymentHistoryScreen' },
-      { label: 'My Appointments', icon: require('../../assets/images/appointment.png'), screen : 'AppointmentFisrtScreen' },
+      { label: 'My Appointments', icon: require('../../assets/images/appointment.png'), screen : 'DoctorAppointment' },
       { label: 'Attach Prescription', icon: require('../../assets/images/medical.png'), screen : 'PrescriptionScreen' },
-      { label: 'Patient Records', icon: require('../../assets/images/medical.png'), screen : 'PatientReport' },
-      { label: 'Log out', icon: require('../../assets/images/logout.png'), screen : 'SignIn' },
+      { label: 'Log out', icon: require('../../assets/images/logout.png'), screen : 'Wellcome' },
     ]
   }
   return (
     <View className="flex-1 bg-gradient-to-b from-green-400 to-white">
       {/* Header */}
       <View className="flex-row items-center px-4 py-6 bg-green-500 rounded-b-xl">
-        <Image
+        {/* <Image
           source={{ uri: 'https://www.shutterstock.com/shutterstock/photos/2289779951/display_1500/stock-photo-happy-young-man-in-glasses-white-background-2289779951.jpg' }}
           className="w-12 h-12 rounded-full"
-        />
+        /> */}
         <View className="ml-4">
           <Text className="text-lg font-bold text-white">{currentUser?.username}</Text>
-          <Text className="text-sm text-white">+3500000000</Text>
+          <Text className="text-sm text-white">{currentUser?.email}</Text>
         </View>
        
       </View>
 
       {/* Menu Options */}
       <View className="mt-6">
-        {roleMenuItemsMap[currentUser?.role].map((item, index) => (
+        {roleMenuItemsMap[currentUser?.role]?.map((item, index) => (
           <TouchableOpacity
             key={index}
-            onPress={()=> item?.screen ? navigation.navigate(item?.screen) : () => {}}
+            onPress={()=>{
+              if(item?.screen){
+                if(item?.label==='Log out'){
+                  dispatch(userLoggedOut());
+                  navigation.navigate('Wellcome');
+                }else{
+                  navigation.navigate(item?.screen);
+                }
+                
+              }
+            }}
             className="flex-row items-center justify-between px-4 py-4 border-b border-gray-200"
           >
             <View className="flex-row items-center">

@@ -30,6 +30,9 @@ import TestScreen from '../screen/TestScreen';
 import AttachPrescriptionScreen from '../screen/AttachPrescription';
 import RecordScreen from '../screen/RecordScreen';
 import PatientReport from '../screen/PatientReport';
+import { useSelector } from 'react-redux';
+import { RootState } from '../app/store';
+import DoctorAppointment from '../screen/DoctorAppointment';
 
 
 export type RootStackParamList = {
@@ -63,20 +66,26 @@ export type RootStackParamList = {
   AttachPrescriptionScreen: undefined;
   RecordScreen : undefined;
   PatientReport: undefined;
+  DoctorAppointment: undefined
 };
 
 const Stack =createStackNavigator<RootStackParamList>();
 
 const StackNavigator: React.FC = () => {
+  const { currentUser} : any = useSelector((state : RootState) => state.auth);
+  
   return (
-    <Stack.Navigator initialRouteName="Wellcome">
-      <Stack.Screen  options={{ headerShown: false }} name="TestScreen"  component={TestScreen} />
-      <Stack.Screen  options={{ headerShown: false }} name="Wellcome"  component={Wellcome} />
-      <Stack.Screen  options={{ headerShown: false }} name="Wellcome2"  component={Wellcome2} />
-      <Stack.Screen  options={{ headerShown: false }} name="Wellcome3"  component={Wellcome3} />
-      <Stack.Screen  options={{ headerShown: false }} name="SignIn" component={SignIn} />
-      <Stack.Screen  options={{ headerShown: false }} name="SignupScreen" component={SignupScreen} />
-      <Stack.Screen  options={{ headerShown: false }} name="RoleSelection" component={RoleSelection} />
+    <Stack.Navigator initialRouteName={currentUser?.role ? "ProfileScreen" : "Wellcome"}>
+      {
+        !currentUser?.role ? <>
+              <Stack.Screen  options={{ headerShown: false }} name="Wellcome"  component={Wellcome} />
+              <Stack.Screen  options={{ headerShown: false }} name="Wellcome2"  component={Wellcome2} />
+              <Stack.Screen  options={{ headerShown: false }} name="Wellcome3"  component={Wellcome3} />
+              <Stack.Screen  options={{ headerShown: false }} name="SignIn" component={SignIn} />
+              <Stack.Screen  options={{ headerShown: false }} name="SignupScreen" component={SignupScreen} />
+        </> : <>
+
+        <Stack.Screen  options={{ headerShown: false }} name="ProfileScreen" component={TabNavigator} />
       <Stack.Screen  options={{ headerShown: false }} name="CurentMedication" component={CurrentMedicationScreen} />
       <Stack.Screen  options={{ headerShown: false }} name="OperationHistory" component={OperationHistoryScreen} />
       <Stack.Screen  options={{ headerShown: false }} name="HealthStatus" component={HealthStatusScreen} />
@@ -96,9 +105,13 @@ const StackNavigator: React.FC = () => {
       <Stack.Screen  options={{ headerShown: false }} name="ChatScreen" component={ChatScreen} />
       <Stack.Screen  options={{ headerShown: false }} name="ActiveDoctorListScreen" component={ActiveDoctorListScreen} />
       <Stack.Screen  options={{ headerShown: false }} name="ChatbotScreen" component={ChatbotScreen} />
-      <Stack.Screen  options={{ headerShown: false }} name="ProfileScreen" component={TabNavigator} />
       <Stack.Screen  options={{ headerShown: false }} name="AttachPrescriptionScreen" component={AttachPrescriptionScreen} />
       <Stack.Screen  options={{ headerShown: false }} name="PatientReport" component={PatientReport} />
+      <Stack.Screen  options={{ headerShown: false }} name="DoctorAppointment" component={DoctorAppointment} />
+        </>
+      }
+      
+    
     </Stack.Navigator>
   );
 };

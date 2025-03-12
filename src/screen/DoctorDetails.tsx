@@ -43,7 +43,7 @@ const DoctorCard = ({ doctor } : any) => {
         </View>
       </View>
       <View className="w-full">
-      <TouchableOpacity onPress={() => navigation.navigate('AppointmentFisrtScreen')} className="bg-[#0EBE7F]  py-3 rounded-lg">
+      <TouchableOpacity onPress={() => navigation.navigate('AppointmentFisrtScreen', {id : doctor?.id, name : doctor.name, specialty: doctor.specialty})} className="bg-[#0EBE7F]  py-3 rounded-lg">
           <Text className="text-white text-center">Book Now</Text>
         </TouchableOpacity>
       </View>
@@ -52,12 +52,12 @@ const DoctorCard = ({ doctor } : any) => {
 };
 
 // Main Doctor List Component
-const DoctorList = () => {
+const DoctorList = ({doctor} : any) => {
   const doctors = [
     {
-      id: 1,
-      name: 'Darrell Steward',
-      specialty: 'Tooths Dentist',
+      id: doctor?.id,
+      name: doctor?.name,
+      specialty: doctor?.specialty,
       experience: '07 Years experience',
       rating: 87,
       patientStories: 69,
@@ -103,13 +103,13 @@ const DoctorList = () => {
 };
 
 // Main App Component
-const DoctorDetails = () => {
+const DoctorDetails = ({route}:any) => {
   return (
     <><StatusBar backgroundColor="#61CEFF33" barStyle="light-content"/>
     <SafeAreaView className="flex-1 bg-[#61CEFF33]">
       <Header  />
       
-      <DoctorList />
+      <DoctorList doctor = {route?.params}/>
     </SafeAreaView>
     </>
   );

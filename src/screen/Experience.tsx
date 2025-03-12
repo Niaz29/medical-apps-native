@@ -41,7 +41,7 @@ const ExperienceScreen = ({ navigation }: any) => {
     reset();
     setStartDate(null);
     setEndDate(null);
-    navigation.navigate('Doctor')
+    navigation.navigate('ProfileScreen')
    }else if(!res?.data?.status){
     tostify({type : 'info', title : 'Info', subTitle : res?.data?.message})
     
