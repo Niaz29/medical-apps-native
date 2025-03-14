@@ -2,6 +2,8 @@ import React from 'react';
 import { View, Text, TextInput, Image, FlatList, TouchableOpacity, ScrollView } from 'react-native';
 import { useGetAllDoctorQuery } from '../features/education/eductionApi';
 import { Loading } from '../components/moleclues/Loading';
+import { useSelector } from 'react-redux';
+import { RootState } from '../app/store';
 
 
 // Search Bar Component
@@ -72,6 +74,7 @@ const CategoryIcons = () => {
 
 // Popular Doctors Component
 const PopularDoctors = ({navigation}:any) => {
+  const { currentUser} : any = useSelector((state : RootState) => state.auth);
 
   const {data} = useGetAllDoctorQuery(null);
 
@@ -87,7 +90,7 @@ const PopularDoctors = ({navigation}:any) => {
         data={popularDoctors || []}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => navigation.navigate('DoctorBook')} >
+          <TouchableOpacity onPress={() => currentUser?.role === 'patient' ? navigation.navigate('DoctorBook') : {}} >
             <View className="mr-4 bg-white rounded-lg shadow w-[184px] h-[209px]">
             <Image source={{ uri: item.image }} className="w-full h-[128px] rounded-t-lg" />
           <View className=''>
@@ -105,6 +108,7 @@ const PopularDoctors = ({navigation}:any) => {
 
 // Doctor On Component
 const DoctorsList = ({navigation} : any) => {
+  const { currentUser} : any = useSelector((state : RootState) => state.auth);
   const {data, isLoading} = useGetAllDoctorQuery(null);
 
   const allDoctor = data?.map((item : any) => {
@@ -130,7 +134,7 @@ const DoctorsList = ({navigation} : any) => {
         data={allDoctor || []}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={()=> navigation.navigate('DoctorDetails', {id : item?.id, name : item.name, specialty: item.specialty})}>
+          <TouchableOpacity onPress={()=> currentUser?.role === 'patient' ? navigation.navigate('DoctorDetails', {id : item?.id, name : item.name, specialty: item.specialty}) : {}}>
             <View className="flex-col mr-4 justify-center bg-white rounded-2xl w-[113px] h-[153px] shadow  mb-4">
             <View className='flex-row items-center justify-between p-2'>
                 <View className='flex-row items-center gap-2'>

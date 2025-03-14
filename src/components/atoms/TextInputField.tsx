@@ -35,6 +35,7 @@ const TextInputField: React.FC<TextInputFieldProps> = ({
           onChangeText={onChangeText}
           secureTextEntry={isSecure}
           placeholderTextColor="#999"
+          keyboardType="default"
         />
         {secureTextEntry && (
           <TouchableOpacity onPress={toggleSecureTextEntry} style={styles.toggleButton}>
@@ -64,6 +65,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 12,
     fontSize: 16,
+    color : 'green',
   },
   toggleButton: {
     paddingHorizontal: 12,

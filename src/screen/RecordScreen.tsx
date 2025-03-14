@@ -146,7 +146,6 @@ const RecordScreen = ({ navigation }: any) => {
       {/* Next Button */}
       <View className="flex-1 items-center">
         <PrimaryButton text="Done" onPress={handleSubmit(onSubmit)} />
-        <SecondaryButton text="Add Record" onPress={() => navigation.push("PrescriptionScreen")} />
       </View>
       <ChooseFileModal isVisible={isVisible} setIsVisible={setIsVisible} setImageUri={setImageUri}/>
     </ScrollView>

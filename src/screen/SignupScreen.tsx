@@ -174,7 +174,7 @@ const handleVerifyOtp = async() => {
         value={value}
         isError={!!errors.password}
         onChangeText={onChange}
-        secureTextEntry
+        secureTextEntry={true}
       />
       )}
     />
@@ -191,7 +191,7 @@ const handleVerifyOtp = async() => {
         value={value}
         isError={!!errors.confirmPassword}
         onChangeText={onChange}
-        secureTextEntry
+        secureTextEntry={true}
       />
       )}
     />

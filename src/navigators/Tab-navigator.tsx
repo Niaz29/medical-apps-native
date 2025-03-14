@@ -17,7 +17,7 @@ const TabNavigator: React.FC = () => {
     <Tab.Navigator
     initialRouteName="Profile"
     screenOptions={({ route }) => ({
-      tabBarActiveTintColor: '#e91e63',
+      tabBarActiveTintColor: 'green',
       tabBarIcon: ({ color, size }) => {
         let iconName;
 

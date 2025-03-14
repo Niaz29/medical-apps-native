@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../app/store';
 import SocketIOClient from 'socket.io-client';
 import { userLoggedOut } from '../features/auth/authSlice';
+import { BASE_URL } from '../constants/apiEndpoints';
+import { removeData } from '../utils/AsyncStorageService';
 
 const ProfileScreen = ({navigation} : any) => {
   const {currentUser} : any = useSelector((state : RootState) => state.auth);
@@ -13,7 +15,7 @@ const ProfileScreen = ({navigation} : any) => {
   );
 
   if(currentUser?.role === 'doctor'){
-    const socket = SocketIOClient('https://medical-app.online', {
+    const socket = SocketIOClient(`${BASE_URL}`, {
       transports: ['websocket'],
       query: {
         callerId,
@@ -24,12 +26,12 @@ const ProfileScreen = ({navigation} : any) => {
 
   const roleMenuItemsMap = {
     'patient' : [
-      { label: 'My Doctors', icon: require('../../assets/images/doctor.png'), screen : 'Doctor' },
-      { label: 'Active Doctors', icon: require('../../assets/images/doctor.png'), screen : 'ActiveDoctorListScreen' },
+      { label: 'My Doctors', icon: require('../../assets/images/doctor.png'), screen : 'MyDoctorList' },
+      { label: 'Active Doctors', icon: require('../../assets/images/check.png'), screen : 'ActiveDoctorListScreen' },
       { label: 'Medical Records', icon: require('../../assets/images/medical.png'), screen : 'ReportScreen' },
-      { label: 'My Prescriptions', icon: require('../../assets/images/medical.png'), screen : 'PatientReport' },
+      { label: 'My Prescriptions', icon: require('../../assets/images/prescription.png'), screen : 'PatientReport' },
       { label: 'Payments', icon: require('../../assets/images/payments.png'), screen : 'PaymentHistoryScreen' },
-      // { label: 'My Appointments', icon: require('../../assets/images/appointment.png'), screen : 'AppointmentFisrtScreen' },
+      { label: 'My Appointments', icon: require('../../assets/images/appointment.png'), screen : 'PatientAppointment' },
       { label: 'Maps', icon: require('../../assets/images/map.png'), screen : 'MapScreen' },
       { label: 'Call Emergency Ambulance', icon: require('../../assets/images/call.png'), screen : 'Doctor' },
       { label: 'Privacy & Policy', icon: require('../../assets/images/privacy.png'), screen : '' },
@@ -46,10 +48,7 @@ const ProfileScreen = ({navigation} : any) => {
     <View className="flex-1 bg-gradient-to-b from-green-400 to-white">
       {/* Header */}
       <View className="flex-row items-center px-4 py-6 bg-green-500 rounded-b-xl">
-        {/* <Image
-          source={{ uri: 'https://www.shutterstock.com/shutterstock/photos/2289779951/display_1500/stock-photo-happy-young-man-in-glasses-white-background-2289779951.jpg' }}
-          className="w-12 h-12 rounded-full"
-        /> */}
+     
         <View className="ml-4">
           <Text className="text-lg font-bold text-white">{currentUser?.username}</Text>
           <Text className="text-sm text-white">{currentUser?.email}</Text>
@@ -59,13 +58,14 @@ const ProfileScreen = ({navigation} : any) => {
 
       {/* Menu Options */}
       <View className="mt-6">
-        {roleMenuItemsMap[currentUser?.role]?.map((item, index) => (
+        {roleMenuItemsMap[currentUser?.role]?.map((item : any, index : number) => (
           <TouchableOpacity
             key={index}
-            onPress={()=>{
+            onPress={async()=>{
               if(item?.screen){
                 if(item?.label==='Log out'){
                   dispatch(userLoggedOut());
+                  await removeData('MEDICAL_AUTH');
                   navigation.navigate('Wellcome');
                 }else{
                   navigation.navigate(item?.screen);

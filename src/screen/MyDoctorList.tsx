@@ -1,3 +1,5 @@
+
+
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { View, Text, FlatList, Image, TouchableOpacity, RefreshControl } from 'react-native';
@@ -15,14 +17,14 @@ return (
     {/* Replace this text with an icon if needed */}
     <Image className='w-[8px] h-[16px] mx-3' source={require('../../assets/images/right-arrow.png')} />
   </TouchableOpacity>
-  <Text className="text-lg font-bold flex-1 text-center">Active Doctors</Text>
+  <Text className="text-lg font-bold flex-1 text-center">My Doctors</Text>
 </View>
 </View>
 );
 };
 
-const ActiveDoctorListScreen = ({ navigation }: any) => {
-  const [refreshing, setRefreshing] = useState(false);
+const MyDoctorList = ({ navigation }: any) => {
+    const [refreshing, setRefreshing] = useState(false);
 
   const {data : allDoctorWithStatus, isLoading, refetch} = useGetAllDoctorWithStatusQuery(null);
 
@@ -57,10 +59,7 @@ const ActiveDoctorListScreen = ({ navigation }: any) => {
           <Text className="text-sm text-gray-500">{item.specialty}</Text>
         </View>
 
-        {/* Active/Inactive Indicator */}
-        <View
-          className={`h-4 w-4 rounded-full ${item.isActive ? 'bg-green-500' : 'bg-red-500'}`}
-        />
+      
       </TouchableOpacity>
     );
   };
@@ -77,11 +76,11 @@ const ActiveDoctorListScreen = ({ navigation }: any) => {
         renderItem={renderDoctor}
         className="flex-1 bg-white"
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
       />
     </View>
   );
 };
 
-export default ActiveDoctorListScreen;
+export default MyDoctorList;

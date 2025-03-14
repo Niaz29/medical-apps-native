@@ -46,6 +46,14 @@ export const educationApi = apiSlice.injectEndpoints({
           body: data,
         }), 
       }),
+      updateApprovalStatus: builder.mutation({
+        query: (id) => ({
+          url: `/appointments/${id}/approve`,
+          method: 'PATCH',
+          body: {isApproved : true},
+        }),
+        invalidatesTags : ['appointments']
+      }),
       getAllDoctor : builder.query({
         query: () => ({
           url: '/doctors',
@@ -75,4 +83,4 @@ export const educationApi = apiSlice.injectEndpoints({
   }),
 });
 
-export const {useCreateEducationMutation, useCreateHealthStatusMutation, useCreateExperienceMutation, useCreateCurrentMedicationMutation, useGetAllDoctorQuery, useCreateOperationHistoryMutation, useGetAllDoctorWithStatusQuery, useCreatePrescriptionMutation, useGetAllPatientQuery, useCreateAppointmentMutation} = educationApi;
+export const {useCreateEducationMutation, useCreateHealthStatusMutation, useCreateExperienceMutation, useCreateCurrentMedicationMutation, useGetAllDoctorQuery, useCreateOperationHistoryMutation, useGetAllDoctorWithStatusQuery, useCreatePrescriptionMutation, useGetAllPatientQuery, useCreateAppointmentMutation, useUpdateApprovalStatusMutation} = educationApi;

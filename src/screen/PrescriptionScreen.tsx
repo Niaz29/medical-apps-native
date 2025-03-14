@@ -34,7 +34,7 @@ const PrescriptionScreen = ({ navigation }: any) => {
 
   const {data : patients} = useGetAllPatientQuery(null);
 
-  const patientOptions = patients?.map((pat : any, index : number) => ({ key: index++, value: pat?.userId?.username}))
+  const patientOptions = patients?.map((pat : any, index : number) => ({ key: index++, value: pat?.user?.username}))
 
   const handleDateChange = (selectedDate : any) => {
     setEndDate(selectedDate);
@@ -47,7 +47,7 @@ const PrescriptionScreen = ({ navigation }: any) => {
       return;
     }
   
-    const patientId = patients?.find((item: any) => item?.userId?.username === data?.patientId)?.id;
+    const patientId = patients?.find((item: any) => item?.user?.username === data?.patientId)?.id;
   
     if (!patientId) {
       tostify({ type: 'error', title: 'Error', subTitle: 'Invalid Patient Selection' });
@@ -176,7 +176,7 @@ const PrescriptionScreen = ({ navigation }: any) => {
       {/* Next Button */}
       <View className="flex-1 items-center">
         <PrimaryButton text="Done" onPress={handleSubmit(onSubmit)} />
-        <SecondaryButton text="Add Report" onPress={() => navigation.push("PrescriptionScreen")} />
+  
       </View>
       <ChooseFileModal isVisible={isVisible} setIsVisible={setIsVisible} setImageUri={setImageUri}/>
     </ScrollView>

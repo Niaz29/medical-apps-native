@@ -1,5 +1,5 @@
 import { createStackNavigator } from '@react-navigation/stack';
-import React from 'react';
+import React, { useEffect } from 'react';
 import SignIn from '../screen/SignIn';
 import Wellcome from '../screen/Wellcome';
 import Wellcome2 from '../screen/Wellcome2';
@@ -30,9 +30,13 @@ import TestScreen from '../screen/TestScreen';
 import AttachPrescriptionScreen from '../screen/AttachPrescription';
 import RecordScreen from '../screen/RecordScreen';
 import PatientReport from '../screen/PatientReport';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../app/store';
 import DoctorAppointment from '../screen/DoctorAppointment';
+import PatientAppointment from '../screen/PatientAppointment';
+import { getDataJSON } from '../utils/AsyncStorageService';
+import { userLoggedIn } from '../features/auth/authSlice';
+import MyDoctorList from '../screen/MyDoctorList';
 
 
 export type RootStackParamList = {
@@ -66,13 +70,36 @@ export type RootStackParamList = {
   AttachPrescriptionScreen: undefined;
   RecordScreen : undefined;
   PatientReport: undefined;
-  DoctorAppointment: undefined
+  DoctorAppointment: undefined;
+  PatientAppointment : undefined;
+  MyDoctorList : undefined;
 };
 
 const Stack =createStackNavigator<RootStackParamList>();
 
 const StackNavigator: React.FC = () => {
   const { currentUser} : any = useSelector((state : RootState) => state.auth);
+  const dispatch = useDispatch();
+
+  const fetchCurrentUser = async () => {
+    try {
+      const user = await getDataJSON("MEDICAL_AUTH");
+      dispatch(
+        userLoggedIn({
+          accessToken: user?.currentUser?.token,
+          currentUser: user?.currentUser,
+        }))
+
+    } catch (error) {
+      console.error("Error fetching prescriptions:", error);
+    } finally {
+      // setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCurrentUser();
+  }, []);
   
   return (
     <Stack.Navigator initialRouteName={currentUser?.role ? "ProfileScreen" : "Wellcome"}>
@@ -85,7 +112,7 @@ const StackNavigator: React.FC = () => {
               <Stack.Screen  options={{ headerShown: false }} name="SignupScreen" component={SignupScreen} />
         </> : <>
 
-        <Stack.Screen  options={{ headerShown: false }} name="ProfileScreen" component={TabNavigator} />
+      <Stack.Screen  options={{ headerShown: false }} name="ProfileScreen" component={TabNavigator} />
       <Stack.Screen  options={{ headerShown: false }} name="CurentMedication" component={CurrentMedicationScreen} />
       <Stack.Screen  options={{ headerShown: false }} name="OperationHistory" component={OperationHistoryScreen} />
       <Stack.Screen  options={{ headerShown: false }} name="HealthStatus" component={HealthStatusScreen} />
@@ -104,10 +131,12 @@ const StackNavigator: React.FC = () => {
       <Stack.Screen  options={{ headerShown: false }} name="MapScreen" component={MapScreen} />
       <Stack.Screen  options={{ headerShown: false }} name="ChatScreen" component={ChatScreen} />
       <Stack.Screen  options={{ headerShown: false }} name="ActiveDoctorListScreen" component={ActiveDoctorListScreen} />
+      <Stack.Screen  options={{ headerShown: false }} name="MyDoctorList" component={MyDoctorList} />
       <Stack.Screen  options={{ headerShown: false }} name="ChatbotScreen" component={ChatbotScreen} />
       <Stack.Screen  options={{ headerShown: false }} name="AttachPrescriptionScreen" component={AttachPrescriptionScreen} />
       <Stack.Screen  options={{ headerShown: false }} name="PatientReport" component={PatientReport} />
       <Stack.Screen  options={{ headerShown: false }} name="DoctorAppointment" component={DoctorAppointment} />
+      <Stack.Screen  options={{ headerShown: false }} name="PatientAppointment" component={PatientAppointment} />
         </>
       }
       
